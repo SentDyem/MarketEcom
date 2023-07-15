@@ -1,33 +1,33 @@
 {
   "project_info": {
-    "project_number": "520356706662",
-    "project_id": "marketplaceecom-e23f6",
-    "storage_bucket": "marketplaceecom-e23f6.appspot.com"
+    "project_number": "594920302997",
+    "project_id": "marketecom-5ae4c",
+    "storage_bucket": "marketecom-5ae4c.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:520356706662:android:04b5cb8612e8530d81f0a7",
+        "mobilesdk_app_id": "1:594920302997:android:5e2b5c1d0b4cbb846bae9c",
         "android_client_info": {
           "package_name": "com.marketecom"
         }
       },
       "oauth_client": [
         {
-          "client_id": "520356706662-vcosdjgqf53j5cf44oako2858c6i4i54.apps.googleusercontent.com",
+          "client_id": "594920302997-17mcbc74rat3assksokdo4bfsb0fpf35.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyA81x3vyl0i58yfwnAuj3a8I7dKE9e59w4"
+          "current_key": "AIzaSyBCHW3awnXJmCNvwXrPvdVrU05QQILRV9c"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "520356706662-vcosdjgqf53j5cf44oako2858c6i4i54.apps.googleusercontent.com",
+              "client_id": "594920302997-17mcbc74rat3assksokdo4bfsb0fpf35.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
