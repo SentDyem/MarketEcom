@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "520356706662",
+    "project_id": "marketplaceecom-e23f6",
+    "storage_bucket": "marketplaceecom-e23f6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:520356706662:android:04b5cb8612e8530d81f0a7",
+        "android_client_info": {
+          "package_name": "com.marketecom"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "520356706662-vcosdjgqf53j5cf44oako2858c6i4i54.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA81x3vyl0i58yfwnAuj3a8I7dKE9e59w4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "520356706662-vcosdjgqf53j5cf44oako2858c6i4i54.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
