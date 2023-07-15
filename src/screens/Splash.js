@@ -28,8 +28,6 @@ const styles = StyleSheet.create({
    },
    logo:
    {
-    fontSize:30,
-    color:'black',
     width:125,height:125
    }
 })
