@@ -7,7 +7,9 @@ import Main from './Main'
 import Login from '../screens/Login'
 import Signup from '../screens/Signup'
 import Checkout from '../screens/Checkout'
-import Address from '../screens/Address'
+import MyAddress from '../screens/MyAddress'
+import AddAddress from '../screens/AddAddress'
+
 const Stack = createStackNavigator()
 const AppNavigator = () => {
   return (
@@ -17,8 +19,10 @@ const AppNavigator = () => {
         <Stack.Screen name='Main' component={Main} options={{headerShown:false}}/>
         <Stack.Screen name='Login' component={Login} options={{headerShown:false}}/>
         <Stack.Screen name='Signup' component={Signup} options={{headerShown:false}}/>
+        <Stack.Screen name='MyAddress' component={MyAddress} options={{headerShown:true}}/>
         <Stack.Screen name='Checkout' component={Checkout} options={{headerShown:true}}/>
-        <Stack.Screen name='Address' component={Address} options={{headerShown:true}}/>
+        <Stack.Screen name='AddAddress' component={AddAddress} options={{headerShown:true}}/>
+        
       </Stack.Navigator>
     </NavigationContainer>
   )

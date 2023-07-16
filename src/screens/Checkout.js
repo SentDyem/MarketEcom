@@ -4,12 +4,13 @@ import firestore from '@react-native-firebase/firestore'
 import { FlatList } from 'react-native-gesture-handler'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { TouchEventType } from 'react-native-gesture-handler/lib/typescript/TouchEventType'
-import { useNavigation } from '@react-navigation/native'
+import { useIsFocused, useNavigation } from '@react-navigation/native'
 
 const Checkout = () => {
     const navigation = useNavigation()
     const [cartList, setCartList] = useState([])
     const [selectedAddress, setSelectedAddress] = useState('')
+    const isFocused = useIsFocused()
 
     useEffect(() => {
         getData()
@@ -23,6 +24,24 @@ const Checkout = () => {
 
             })
     }
+
+    useEffect(() => {
+        getAddress()
+      }, [isFocused])
+    
+      const getAddress = async () => {
+        const id = await AsyncStorage.getItem('USERID')
+        firestore().collection("address").where("addedBy", "==", id).get().then(snapshot => {
+          if (snapshot.docs != []) {
+            snapshot.docs.map(item=>{
+                if (item._data.default==true)
+                {
+                    setSelectedAddress(""+item._data.street+", "+item._data.city+", "+item._data.state+", "+item._data.pin)
+                }
+            })
+          }
+        })
+      }
 
     const increaseQty = (item) => {
         firestore().collection('cart').doc(item._data.cartId).update({ qty: item._data.qty + 1 }).then(res => {
@@ -97,11 +116,14 @@ const Checkout = () => {
             <View style={styles.totalView}>
                 <Text style={styles.title}>{'Адрес доставки'}</Text>
                 <Text style={[styles.title,{textDecorationLine:'underline', color:'blue'}]} onPress={()=>{
-                    navigation.navigate("Address")
+                    navigation.navigate("MyAddress")
                 }}>{'Изменить адрес'}</Text>
             
             </View>
             <Text style = {styles.address}>{selectedAddress==''?'Адрес не выбран':selectedAddress}</Text>
+            <TouchableOpacity style = {styles.payBtn}>
+                <Text style = {styles.btnText}>Оплатить</Text>
+            </TouchableOpacity>
         </View>
     )
 }
@@ -217,6 +239,20 @@ const styles = StyleSheet.create({
     },
     address:{
         marginLeft:20,
-        marginTop:20
+        marginTop:20,
+        
+    },
+    payBtn: {
+        width: '90%',
+        height:50,
+        borderRadius:10,
+        backgroundColor:'blue',
+        justifyContent:'center',
+        alignItems:'center',
+        alignSelf:'center',
+        marginTop:30,
+    },
+    btnText: {
+        color:'white'
     }
 })
