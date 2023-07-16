@@ -5,6 +5,8 @@ import { FlatList } from 'react-native-gesture-handler'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import LoginSignupDialog from '../common/LoginSignupDialog'
 import { useNavigation } from '@react-navigation/native'
+import uuid from 'react-native-uuid'
+
 const Home = () => {
   const navigation = useNavigation()
   const [products, setProducts] = useState([])
@@ -12,6 +14,7 @@ const Home = () => {
   useEffect(() => {
     getProducts()
   }, [])
+
   const getProducts = () => {
     firestore().collection("products").get().then(snapshot => {
       if (snapshot.docs != []) {
@@ -20,14 +23,36 @@ const Home = () => {
     }
     )
   }
-  const checkLogin = async () => {
+
+  const checkLogin = async item => {
     let id = await AsyncStorage.getItem("USERID");
+    const cartId = uuid.v4();
     if (id != null) {
+      firestore().collection("cart").where("addedBy", "==", id).get().then(snapshot => {
+        if (snapshot.docs.length > 0) {
+          snapshot.docs.map(x => {
+            if (x._data.productId == item._data.productId) {
+              firestore().collection('cart').doc(x._data.cartId).update({qty: x._data.qty+1}).then(res => {
+              }).catch(error => { console.log(error) })
+            }
+            else {
+              firestore().collection('cart').doc(cartId).set({ ...item._data, addedBy: id, qty: 1, cartId: cartId }).then(res => {
+              }).catch(error => { console.log(error) })
+            }
+          })
+        }
+        else {
+          firestore().collection('cart').doc(cartId).set({ ...item._data, addedBy: id, qty: 1, cartId: cartId }).then(res => {
+          }).catch(error => { console.log(error) })
+         }
+      }
+      )
 
     }
     else {
-      setVisible(true)
+      setVisible(true);
     }
+
   }
   return (
     <View style={styles.container}>
@@ -50,19 +75,18 @@ const Home = () => {
                 </View>
               </View>
               <View style={styles.rightView}>
-                <TouchableOpacity onPress={() => {checkLogin()}}>
+                <TouchableOpacity onPress={() => { checkLogin(item) }}>
                   <Image source={require('../images/heart.png')} style={styles.icon} />
                 </TouchableOpacity>
-                <Text style={styles.addToCart} onPress={() => {checkLogin()}}>В корзину</Text>
+                <Text style={styles.addToCart} onPress={() => { checkLogin(item) }}>В корзину</Text>
               </View>
             </View>
           )
         }} />
-        
       </View>
-      <LoginSignupDialog onClickLoginSign={()=>{navigation.navigate("Login")}} onCancel={()=>{
+      <LoginSignupDialog onClickLoginSign={() => { navigation.navigate("Login") }} onCancel={() => {
         setVisible(false)
-      }} visible = {visible}/>
+      }} visible={visible} />
     </View>
   )
 }
