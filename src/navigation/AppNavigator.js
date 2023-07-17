@@ -11,6 +11,7 @@ import MyAddress from '../screens/MyAddress'
 import AddAddress from '../screens/AddAddress'
 import Success from '../screens/Success'
 import Orders from '../screens/Orders'
+import ProductDetail from '../screens/ProductDetail'
 
 const Stack = createStackNavigator()
 const AppNavigator = () => {
@@ -26,6 +27,7 @@ const AppNavigator = () => {
         <Stack.Screen name='AddAddress' component={AddAddress} options={{headerShown:true}}/>
         <Stack.Screen name='Success' component={Success} options={{headerShown:false}}/>
         <Stack.Screen name='Orders' component={Orders} options={{headerShown:true}}/>
+        <Stack.Screen name='ProductDetail' component={ProductDetail} options={{headerShown:true}}/>
         
       </Stack.Navigator>
     </NavigationContainer>

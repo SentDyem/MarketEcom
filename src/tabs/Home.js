@@ -64,7 +64,9 @@ const Home = () => {
       <View>
         <FlatList data={products} renderItem={({ item, index }) => {
           return (
-            <View style={styles.productItem}>
+            <TouchableOpacity style={styles.productItem} onPress={()=> {
+              navigation.navigate("ProductDetail", {data:item})
+            }}>
               <Image source={{ uri: item._data.productImage }} style={styles.productImage} />
               <View style={styles.centerView}>
                 <Text style={styles.name}>{item._data.productName}</Text>
@@ -80,7 +82,7 @@ const Home = () => {
                 </TouchableOpacity>
                 <Text style={styles.addToCart} onPress={() => { checkLogin(item) }}>В корзину</Text>
               </View>
-            </View>
+            </TouchableOpacity>
           )
         }} />
       </View>

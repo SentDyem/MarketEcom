@@ -80,7 +80,7 @@ const Cart = () => {
         }} />
       </View>):(
         <View style = {[styles.container,{justifyContent:'center', alignItems:'center',}]}>
-          <Text>Ваша корзина пустая</Text>
+          <Text>Ваша корзина пуста</Text>
         </View>)}
 
 
@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
     flex: 1
   },
   productItem: {
-    width: Dimensions.get('window').width - 50,
+    width: Dimensions.get('window').width - 20,
     height: 100,
     backgroundColor: 'white',
     alignSelf: 'center',
