@@ -5,6 +5,7 @@ import { useNavigation } from '@react-navigation/native'
 import firestore from '@react-native-firebase/firestore'
 import uuid from 'react-native-uuid'
 import Loader from '../common/Loader'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 const Signup = () => {
     const navigation = useNavigation()
@@ -26,11 +27,19 @@ const Signup = () => {
         {
             setVisible(false)
             console.log("user created")
-            navigation.goBack()
+            goToNextScreen(userId,email,name)
+            navigation.navigate("Main")
         }).catch(error=>{
             setVisible(false)
         })
     }
+
+    const goToNextScreen = async(userId, email, name) =>{
+      await AsyncStorage.setItem("USERID", userId)
+      await AsyncStorage.setItem("EMAIL", email)
+      await AsyncStorage.setItem("NAME", name)
+      navigation.navigate('Main')
+        }
   return (
     <View style = {styles.container}>
         <View style = {styles.header}>

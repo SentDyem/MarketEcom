@@ -9,6 +9,8 @@ import Signup from '../screens/Signup'
 import Checkout from '../screens/Checkout'
 import MyAddress from '../screens/MyAddress'
 import AddAddress from '../screens/AddAddress'
+import Success from '../screens/Success'
+import Orders from '../screens/Orders'
 
 const Stack = createStackNavigator()
 const AppNavigator = () => {
@@ -17,11 +19,13 @@ const AppNavigator = () => {
       <Stack.Navigator>
         <Stack.Screen name='Splash' component={Splash} options={{headerShown:false}}/>
         <Stack.Screen name='Main' component={Main} options={{headerShown:false}}/>
-        <Stack.Screen name='Login' component={Login} options={{headerShown:false}}/>
-        <Stack.Screen name='Signup' component={Signup} options={{headerShown:false}}/>
+        <Stack.Screen name='Login' component={Login} options={{headerShown:true}}/>
+        <Stack.Screen name='Signup' component={Signup} options={{headerShown:true}}/>
         <Stack.Screen name='MyAddress' component={MyAddress} options={{headerShown:true}}/>
         <Stack.Screen name='Checkout' component={Checkout} options={{headerShown:true}}/>
         <Stack.Screen name='AddAddress' component={AddAddress} options={{headerShown:true}}/>
+        <Stack.Screen name='Success' component={Success} options={{headerShown:false}}/>
+        <Stack.Screen name='Orders' component={Orders} options={{headerShown:true}}/>
         
       </Stack.Navigator>
     </NavigationContainer>

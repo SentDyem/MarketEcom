@@ -56,7 +56,6 @@ setDefault(item._data.addressId)
             </View>
             <View style = {{alignItems:'center'}}>
               {item._data.default == true && <Text style={styles.default}>{item._data.default == true ? 'Выбран' : ''}</Text>}
-              <Text style={styles.edit}>Изменить</Text>
               <Text style={styles.delete}>Удалить</Text>
 
             </View>

@@ -5,6 +5,8 @@ import { FlatList } from 'react-native-gesture-handler'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { TouchEventType } from 'react-native-gesture-handler/lib/typescript/TouchEventType'
 import { useIsFocused, useNavigation } from '@react-navigation/native'
+import RazorpayCheckout from 'react-native-razorpay';
+import uuid from 'react-native-uuid'
 
 const Checkout = () => {
     const navigation = useNavigation()
@@ -23,6 +25,18 @@ const Checkout = () => {
                 setCartList(snapshot.docs)
 
             })
+    }
+
+    const orderPlace = (paymentId, address) => {
+        let temp = cartList;
+        temp.map(item=>{
+            const orderId = uuid.v4()
+            firestore().collection("orders").doc(orderId).set({
+                ...item._data,orderId:orderId,paymentId:paymentId,address:address,status:"Заказ создан"
+            })
+            firestore().collection("cart").doc(item._data.cartId).delete()
+        })
+        navigation.navigate("Success")
     }
 
     useEffect(() => {
@@ -67,6 +81,7 @@ const Checkout = () => {
         let total = 0
         temp.map(item => {
             total = total + parseInt(item._data.discountPrice * item._data.qty)
+            
         })
         return total;
     }
@@ -96,13 +111,13 @@ const Checkout = () => {
                                 </View>
                             </View>
                             <View style={styles.rightView}>
-                                <TouchableOpacity onPress={() => { checkLogin(item) }}>
+                                <TouchableOpacity onPress={() => { }}>
                                     <Image source={require('../images/heart.png')} style={styles.icon} />
                                 </TouchableOpacity>
                                 <View style={{ flexDirection: 'row' }}>
-                                    <Text style={styles.addToCart} onPress={() => { decreaseQty(item) }}>-</Text>
+                                    
                                     <Text style={[styles.addToCart, { marginRight: 5, marginLeft: 5 }]} onPress={() => { checkLogin(item) }}>{item._data.qty}</Text>
-                                    <Text style={styles.addToCart} onPress={() => { increaseQty(item) }}>+</Text>
+                                    
                                 </View>
                             </View>
                         </View>
@@ -121,7 +136,28 @@ const Checkout = () => {
             
             </View>
             <Text style = {styles.address}>{selectedAddress==''?'Адрес не выбран':selectedAddress}</Text>
-            <TouchableOpacity style = {styles.payBtn}>
+            <TouchableOpacity style = {styles.payBtn} onPress={() => {
+  var options = {
+    description: 'Credits towards consultation',
+    image: 'https://i.imgur.com/3g7nmJC.png',
+    currency: 'RUB',
+    key: 'rzp_test_ScTp5WyKibY9G3', // Your api key
+    amount: getTotal(),
+    name: 'foo',
+    prefill: {
+      email: 'void@razorpay.com',
+      contact: '9191919191',
+      name: 'Razorpay Software'
+    },
+    theme: {color: '#F37254'}
+  }
+  RazorpayCheckout.open(options).then((data) => {
+    alert(`Success: ${data.razorpay_payment_id}`);
+    orderPlace(data.razorpay_payment_id, selectedAddress)
+  }).catch((error) => {
+    alert(`Error: ${error.code} | ${error.description}`);
+  });
+}}>
                 <Text style = {styles.btnText}>Оплатить</Text>
             </TouchableOpacity>
         </View>

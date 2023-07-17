@@ -15,23 +15,23 @@ const Main = () => {
       <View style = {styles.bottomView}>
         <TouchableOpacity style={styles.tab} onPress={()=>{setActiveTab(0)}}>
             <Image source={require('../images/home.png')} style={[styles.tabIcon, {tintColor:activeTab==0?'blue':'black'}]}/>
-            <Text>Главная</Text>
+            <Text style = {{fontSize:12, marginTop:2}}>Главная</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.tab} onPress={()=>{setActiveTab(1)}}>
             <Image source={require('../images/search.png')} style={[styles.tabIcon, {tintColor:activeTab==1?'blue':'black'}]}/>
-            <Text>Каталог</Text>
+            <Text style = {{fontSize:12, marginTop:2}}>Каталог</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.tab} onPress={()=>{setActiveTab(2)}}>
             <Image source={require('../images/shopping-cart.png')} style={[styles.tabIcon, {tintColor:activeTab==2?'blue':'black'}]}/>
-            <Text>Корзина</Text>
+            <Text style = {{fontSize:12, marginTop:2}}>Корзина</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.tab} onPress={()=>{setActiveTab(3)}}>
             <Image source={require('../images/heart.png')} style={[styles.tabIcon, {tintColor:activeTab==3?'blue':'black'}]}/>
-            <Text>Избранное</Text>
+            <Text style = {{fontSize:12, marginTop:2}}>Избранное</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.tab} onPress={()=>{setActiveTab(4)}}>
             <Image source={require('../images/user.png')} style={[styles.tabIcon, {tintColor:activeTab==4?'blue':'black'}]}/>
-            <Text>Профиль</Text>
+            <Text style = {{fontSize:12, marginTop:2}}>Профиль</Text>
         </TouchableOpacity>
       </View>
     </View>

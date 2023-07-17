@@ -24,7 +24,7 @@ const Home = () => {
     )
   }
 
-  const checkLogin = async item => {
+  const checkLogin = async (item) => {
     let id = await AsyncStorage.getItem("USERID");
     const cartId = uuid.v4();
     if (id != null) {
@@ -32,11 +32,11 @@ const Home = () => {
         if (snapshot.docs.length > 0) {
           snapshot.docs.map(x => {
             if (x._data.productId == item._data.productId) {
-              firestore().collection('cart').doc(x._data.cartId).update({qty: x._data.qty+1}).then(res => {
+              firestore().collection('cart').doc(cartId).set({ ...item._data, addedBy: id, qty: 1, cartId: cartId }).then(res => {
               }).catch(error => { console.log(error) })
             }
             else {
-              firestore().collection('cart').doc(cartId).set({ ...item._data, addedBy: id, qty: 1, cartId: cartId }).then(res => {
+              firestore().collection('cart').doc(x._data.cartId).update({qty: x._data.qty+1}).then(res => {
               }).catch(error => { console.log(error) })
             }
           })

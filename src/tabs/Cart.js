@@ -46,14 +46,14 @@ const Cart = () => {
     let temp = cartList;
     let total = 0
     temp.map(item => {
-      total = total + parseInt(item._data.discountPrice*item._data.qty)
+      total = total + parseInt(item._data.discountPrice * item._data.qty)
     })
     return total;
   }
 
   return (
     <View style={styles.container}>
-      <View>
+      {cartList.length > 0?(<View>
         <FlatList data={cartList} renderItem={({ item, index }) => {
           return (
             <View style={styles.productItem}>
@@ -78,7 +78,12 @@ const Cart = () => {
             </View>
           )
         }} />
-      </View>
+      </View>):(
+        <View style = {[styles.container,{justifyContent:'center', alignItems:'center',}]}>
+          <Text>Ваша корзина пустая</Text>
+        </View>)}
+
+
       {cartList.length > 0 && <View style={styles.checkoutView}>
         <Text style={styles.total}>{'Всего к оплате: ' + getTotal() + ' ₽'}</Text>
         <TouchableOpacity style={styles.checkoutBtn} onPress={() => {
