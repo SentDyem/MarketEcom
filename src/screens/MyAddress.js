@@ -4,59 +4,45 @@ import { useIsFocused, useNavigation } from '@react-navigation/native'
 import firestore from '@react-native-firebase/firestore'
 import { FlatList } from 'react-native-gesture-handler'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { useDispatch, useSelector } from 'react-redux'
+import { deleteAddress } from '../redux/slices/AddressSlice'
 const MyAddress = () => {
 
   const navigation = useNavigation()
+  const addressList = useSelector(state=> state.address)
   const isFocused = useIsFocused()
-  const [addressList, setAddressList] = useState([])
+  const dispatch = useDispatch()
 
   useEffect(() => {
-    getAddress()
+    console.log(addressList)
   }, [isFocused])
 
-  const getAddress = async () => {
-    const id = await AsyncStorage.getItem('USERID')
-    firestore().collection("address").where("addedBy", "==", id).get().then(snapshot => {
-      if (snapshot.docs != []) {
-        setAddressList(snapshot.docs)
-      }
-    })
+  const setDefault = async(item)=> {
+    await AsyncStorage.setItem('MY_ADDRESS',''+item.street+','+item.city+','+item.state+','+item.pin)
+    navigation.goBack()
   }
 
-const setDefault=(addressId)=> {
-let temp = addressList;
-temp.map(item=>{
-  if (item._data.addressId==addressId)
-  {
-    firestore().collection("address").doc(addressId).update({
-      default:true
-    })
-  }
-  else {
-    firestore().collection("address").doc(item._data.addressId).update({
-      default:false
-    })
-  }
-})
-getAddress()
-}
+
 
   return (
     <View style={styles.container}>
-      <FlatList data={addressList} renderItem={({ item, index }) => {
+      <FlatList data={addressList.data} renderItem={({ item, index }) => {
         return (
           <TouchableOpacity style={styles.addressItem} onPress ={()=> {
-setDefault(item._data.addressId)
+setDefault(item)
           }}>
             <View>
-              <Text>{"Улица: " + item._data.street}</Text>
-              <Text>{"Город: " + item._data.city}</Text>
-              <Text>{"Регион: " + item._data.state}</Text>
-              <Text>{"Почтовый индекс: " + item._data.pin}</Text>
+              <Text>{"Улица: " + item.street}</Text>
+              <Text>{"Город: " + item.city}</Text>
+              <Text>{"Регион: " + item.state}</Text>
+              <Text>{"Почтовый индекс: " + item.pin}</Text>
             </View>
             <View style = {{alignItems:'center'}}>
-              {item._data.default == true && <Text style={styles.default}>{item._data.default == true ? 'Выбран' : ''}</Text>}
-              <Text style={styles.delete}>Удалить</Text>
+              <TouchableOpacity>
+              <Text style={styles.delete} onPress={()=> {
+                dispatch(deleteAddress(item.id))
+              }}>Удалить</Text>
+              </TouchableOpacity>
 
             </View>
           </TouchableOpacity>

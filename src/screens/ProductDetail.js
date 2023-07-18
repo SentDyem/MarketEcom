@@ -6,64 +6,63 @@ import uuid from 'react-native-uuid'
 import firestore from '@react-native-firebase/firestore'
 import LoginSignupDialog from '../common/LoginSignupDialog'
 import useForceUpdate from 'use-force-update';
+import { ScrollView } from 'react-native-gesture-handler'
+import { addItemToCart } from '../redux/slices/CartSlice'
+import Header from '../common/Header'
+import { useDispatch } from 'react-redux'
 
 
 const ProductDetail = () => {
     const navigation = useNavigation()
     const route = useRoute()
+    const dispatch = useDispatch()
     const [visible, setVisible] = useState(false)
-    const [prod, setProd] = useState(false)
     const cartId = uuid.v4();
-    
 
-    const checkLogin = async (item) => {
-      
+    const checkLogin = async () => {
+      let UserLoggedIn = false;
       let id = await AsyncStorage.getItem("USERID");
       
-      if (id != null) {
-        firestore().collection("cart").where("addedBy", "==", id).get().then(snapshot => {
-          if (snapshot.docs.length > 0) {
-            snapshot.docs.map(x => {
-              if (x._data.productID == item._data.productID) {
-                
-                firestore().collection('cart').doc(x._data.cartId).update({qty: x._data.qty+1}).then(res => {
-                }).catch(error => { console.log(error) })
-              }
-              else {
-
-                firestore().collection('cart').doc(cartId).set({ ...item._data, addedBy: id, qty: 1, cartId: cartId }).then(res => {
-                }).catch(error => { console.log(error) })
-              }
-            })
-          }
-          else {
-            firestore().collection('cart').doc(cartId).set({ ...item._data, addedBy: id, qty: 1, cartId: cartId }).then(res => {
-            }).catch(error => { console.log(error) })
-           }
-        }
-        )
-  
-      }
-      else {
+      if (id == null) {
+        UserLoggedIn = false
         setVisible(true);
       }
+      else {
+
+        UserLoggedIn = true
+        dispatch(addItemToCart(route.params.data))
+      }
+      return UserLoggedIn;
   
     }
 
   return (
     <View style = {styles.container}>
-        <View style = {{justifyContent:'center', alignItems:'center'}}>
-        <Image style = {styles.productImage} source={{uri:route.params.data._data.productImage}} />
-      <Text>{route.params.data._data.productName}</Text>
-      <Text>{route.params.data._data.productDesc}</Text>
-      <Text>{route.params.data._data.price}</Text> 
-      <Text>{route.params.data._data.productID}</Text>         
+      <Header
+        leftIcon={require('../images/home.png')}
+        rightIcon={require('../images/shopping-cart.png')}
+        title={''}
+        onClickLeftIcon={() => {
+          navigation.goBack();
+        }}
+        isMain={false}
+      />
+      <ScrollView>
+      <View style = {{justifyContent:'center', alignItems:'center'}}>
+        <Image style = {styles.productImage} source={{uri:route.params.data.image}} />
+      <Text>{route.params.data.title}</Text>
+      <Text>{route.params.data.description}</Text>
+      <Text>{route.params.data.category}</Text> 
+      <Text>{route.params.data.price}</Text>
+      <Text>{route.params.data.rating.rate}</Text>             
         </View>
       
-      <TouchableOpacity style={styles.addNewBtn} onPress={() => { checkLogin(route.params.data) }}>
+      
+      </ScrollView>
+      <TouchableOpacity style={styles.addNewBtn} onPress={() => { checkLogin() }}>
         <Text style={styles.btnText}>В корзину</Text>
       </TouchableOpacity>
-      <LoginSignupDialog onClickLoginSign={() => { navigation.navigate("Login") }} onCancel={() => {
+      <LoginSignupDialog onClickLoginSign={() => { navigation.navigate("Login"); setVisible(false)}} onCancel={() => {
         setVisible(false)
       }} visible={visible} />
     </View>

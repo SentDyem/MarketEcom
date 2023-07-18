@@ -23,21 +23,22 @@ const Signup = () => {
         email:email,
         password:password,
         userId:userId,
+        mobile:mobile,
       }).then(res=>
         {
-            setVisible(false)
+            //setVisible(false)
             console.log("user created")
-            goToNextScreen(userId,email,name)
-            navigation.navigate("Main")
+            navigation.navigate("Login")
         }).catch(error=>{
-            setVisible(false)
+            //setVisible(false)
         })
     }
 
-    const goToNextScreen = async(userId, email, name) =>{
+    const goToNextScreen = async(userId, email, name, mobile) =>{
       await AsyncStorage.setItem("USERID", userId)
       await AsyncStorage.setItem("EMAIL", email)
       await AsyncStorage.setItem("NAME", name)
+      await AsyncStorage.setItem("MOBILE", mobile)
       navigation.navigate('Main')
         }
   return (

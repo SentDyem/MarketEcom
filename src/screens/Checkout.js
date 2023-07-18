@@ -7,80 +7,44 @@ import { TouchEventType } from 'react-native-gesture-handler/lib/typescript/Touc
 import { useIsFocused, useNavigation } from '@react-navigation/native'
 import RazorpayCheckout from 'react-native-razorpay';
 import uuid from 'react-native-uuid'
+import { useDispatch, useSelector } from 'react-redux'
 
 const Checkout = () => {
     const navigation = useNavigation()
-    const [cartList, setCartList] = useState([])
-    const [selectedAddress, setSelectedAddress] = useState('')
-    const isFocused = useIsFocused()
+    const items = useSelector(state => state.cart)
+  const [cartList, setCartList] = useState([])
+  const [selectedAddress, setSelectedAddress]=useState('')
+  const [name, setName]= useState('')
+    const [email, setEmail]= useState('')
+    const [mobile, setMobile]= useState('')
+  const isFocused = useIsFocused()
+  const dispatch = useDispatch()
 
     useEffect(() => {
+        setCartList(items.data)
         getData()
     }, [])
-
-    const getData = async () => {
-        const id = await AsyncStorage.getItem("USERID")
-        firestore().collection("cart").where("addedBy", "==", id).get().then(
-            snapshot => {
-                setCartList(snapshot.docs)
-
-            })
-    }
-
-    const orderPlace = (paymentId, address) => {
-        let temp = cartList;
-        temp.map(item=>{
-            const orderId = uuid.v4()
-            firestore().collection("orders").doc(orderId).set({
-                ...item._data,orderId:orderId,paymentId:paymentId,address:address,status:"Заказ создан"
-            })
-            firestore().collection("cart").doc(item._data.cartId).delete()
-        })
-        navigation.navigate("Success")
-    }
-
     useEffect(() => {
-        getAddress()
-      }, [isFocused])
-    
-      const getAddress = async () => {
-        const id = await AsyncStorage.getItem('USERID')
-        firestore().collection("address").where("addedBy", "==", id).get().then(snapshot => {
-          if (snapshot.docs != []) {
-            snapshot.docs.map(item=>{
-                if (item._data.default==true)
-                {
-                    setSelectedAddress(""+item._data.street+", "+item._data.city+", "+item._data.state+", "+item._data.pin)
-                }
-            })
-          }
-        })
+        getSelectedAddress()
+    }, [isFocused])
+    const getSelectedAddress = async()=> {
+        setSelectedAddress(await AsyncStorage.getItem('MY_ADDRESS'))
+    }
+    const getData = async () => {
+        let mName = await AsyncStorage.getItem("NAME")
+        let mEmail = await AsyncStorage.getItem("EMAIL")
+        let mMobile = await AsyncStorage.getItem("MOBILE")
+        setName(mName)
+        setEmail(mEmail)
+        setMobile(mMobile)
       }
-
-    const increaseQty = (item) => {
-        firestore().collection('cart').doc(item._data.cartId).update({ qty: item._data.qty + 1 }).then(res => {
-        }).catch(error => { console.log(error) })
-        getData()
-    }
-
-    const decreaseQty = (item) => {
-        if (item._data.qty > 1) {
-            firestore().collection('cart').doc(item._data.cartId).update({ qty: item._data.qty - 1 }).then(res => {
-            }).catch(error => { console.log(error) })
-            getData()
-        }
-        else {
-            firestore().collection('cart').doc(item._data.cartId).delete()
-            getData()
-        }
-
-    }
+    
 
     const getTotal = () => {
         let temp = cartList;
         let total = 0
         temp.map(item => {
-            total = total + parseInt(item._data.discountPrice * item._data.qty)
+            total = total + parseInt(item.price * item.qty)
             
         })
         return total;
@@ -90,7 +54,7 @@ const Checkout = () => {
         let temp = cartList;
         let qty = 0
         temp.map(item => {
-            qty = qty + parseInt(item._data.qty)
+            qty = qty + parseInt(item.qty)
         })
         return qty;
     }
@@ -102,21 +66,17 @@ const Checkout = () => {
                 <FlatList data={cartList} renderItem={({ item, index }) => {
                     return (
                         <View style={styles.productItem}>
-                            <Image source={{ uri: item._data.productImage }} style={styles.productImage} />
+                            <Image source={{ uri: item.image }} style={styles.productImage} />
                             <View style={styles.centerView}>
-                                <Text style={styles.name}>{item._data.productName}</Text>
+                                <Text style={styles.name}>{item.title.length > 2 ? item.title.substring(0, 30) + '...' : item.title}</Text>
                                 <View style={styles.priceView}>
-                                    <Text style={styles.discountPrice}>{item._data.discountPrice + '₽'}</Text>
-                                    <Text style={styles.price}>{item._data.price}</Text>
+                                    <Text style={styles.discountPrice}>{item.price + '$'}</Text>
                                 </View>
                             </View>
                             <View style={styles.rightView}>
-                                <TouchableOpacity onPress={() => { }}>
-                                    <Image source={require('../images/heart.png')} style={styles.icon} />
-                                </TouchableOpacity>
                                 <View style={{ flexDirection: 'row' }}>
                                     
-                                    <Text style={[styles.addToCart, { marginRight: 5, marginLeft: 5 }]} onPress={() => { checkLogin(item) }}>{item._data.qty}</Text>
+                                    <Text style={[styles.addToCart, { marginRight: 5, marginLeft: 5 }]} onPress={() => { }}>{item.qty}</Text>
                                     
                                 </View>
                             </View>
@@ -126,7 +86,7 @@ const Checkout = () => {
             </View>
             <View style={styles.totalView}>
                 <Text style={styles.title}>{'Количество: ' + getQty()}</Text>
-                <Text style={styles.title}>{'Общая сумма: ' + getTotal() + 'руб.'}</Text>
+                <Text style={styles.title}>{'Общая сумма: ' + getTotal() + '$'}</Text>
             </View>
             <View style={styles.totalView}>
                 <Text style={styles.title}>{'Адрес доставки'}</Text>
@@ -140,20 +100,20 @@ const Checkout = () => {
   var options = {
     description: 'Credits towards consultation',
     image: 'https://i.imgur.com/3g7nmJC.png',
-    currency: 'RUB',
+    currency: 'USD',
     key: 'rzp_test_ScTp5WyKibY9G3', // Your api key
     amount: getTotal(),
-    name: 'foo',
+    name: name,
     prefill: {
-      email: 'void@razorpay.com',
+      email: email,
       contact: '9191919191',
-      name: 'Razorpay Software'
+      name: 'Pay Software'
     },
     theme: {color: '#F37254'}
   }
   RazorpayCheckout.open(options).then((data) => {
     alert(`Success: ${data.razorpay_payment_id}`);
-    orderPlace(data.razorpay_payment_id, selectedAddress)
+    navigation.navigate("Success")
   }).catch((error) => {
     alert(`Error: ${error.code} | ${error.description}`);
   });

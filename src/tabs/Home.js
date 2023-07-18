@@ -6,76 +6,45 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import LoginSignupDialog from '../common/LoginSignupDialog'
 import { useNavigation } from '@react-navigation/native'
 import uuid from 'react-native-uuid'
+import { useDispatch } from 'react-redux'
+import { addProducts } from '../redux/slices/ProductsSlice'
 
 const Home = () => {
   const navigation = useNavigation()
   const [products, setProducts] = useState([])
-  const [visible, setVisible] = useState(false)
+  const dispatch = useDispatch()
   useEffect(() => {
-    getProducts()
+    getProducts();
   }, [])
 
   const getProducts = () => {
-    firestore().collection("products").get().then(snapshot => {
-      if (snapshot.docs != []) {
-        setProducts(snapshot.docs)
-      }
-    }
-    )
-  }
-
-  const checkLogin = async (item) => {
-    let id = await AsyncStorage.getItem("USERID");
-    const cartId = uuid.v4();
-    if (id != null) {
-      firestore().collection("cart").where("addedBy", "==", id).get().then(snapshot => {
-        if (snapshot.docs.length > 0) {
-          snapshot.docs.map(x => {
-            if (x._data.productID == item._data.productID) {
+    fetch('https://fakestoreapi.com/products')
+            .then(res=>res.json())
+            .then(json=> {
+              setProducts(json);
+              json.map(item => {
+                item.qty = 1
+              })
+            dispatch(addProducts(json));
+            })
               
-              firestore().collection('cart').doc(x._data.cartId).update({qty: x._data.qty+1}).then(res => {
-              }).catch(error => { console.log(error) })
-            }
-            else {
-              firestore().collection('cart').doc(cartId).set({ ...item._data, addedBy: id, qty: 1, cartId: cartId }).then(res => {
-              }).catch(error => { console.log(error) })
-            }
-          })
-        }
-        else {
-          firestore().collection('cart').doc(cartId).set({ ...item._data, addedBy: id, qty: 1, cartId: cartId }).then(res => {
-          }).catch(error => { console.log(error) })
-         }
-      }
-      )
-
-    }
-    else {
-      setVisible(true);
-    }
 
   }
+
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity>
-          <Image source={require('../images/search.png')} style={styles.titleIcon} />
-        </TouchableOpacity>
-      </View>
       <View>
         <FlatList data={products} renderItem={({ item, index }) => {
           return (
             <TouchableOpacity style={styles.productItem} onPress={()=> {
               navigation.navigate("ProductDetail", {data:item})
             }}>
-              <Image source={{ uri: item._data.productImage }} style={styles.productImage} />
+              <Image source={{ uri: item.image }} style={styles.productImage} />
               <View style={styles.centerView}>
-                <Text style={styles.name}>{item._data.productName}</Text>
-                <Text style={styles.desc}>{item._data.addedBy}</Text>
+                <Text style={styles.name}>{item.title.length > 2 ? item.title.substring(0, 30) + '...' : item.title}</Text>
+                <Text style={styles.desc}></Text>
                 <View style={styles.priceView}>
-                  <Text style={styles.discountPrice}>{item._data.discountPrice + '₽'}</Text>
-                  <Text style={styles.price}>{item._data.price}</Text>
-                  <TouchableOpacity style={styles.addNewBtn} onPress={() => { checkLogin(item) }}><Text>ddddd</Text></TouchableOpacity>
+                  <Text style={styles.discountPrice}>{item.price + '₽'}</Text>
                 </View>
               </View>
             </TouchableOpacity>
@@ -106,7 +75,7 @@ const styles = StyleSheet.create({
   },
   productItem: {
     width: Dimensions.get('window').width - 50,
-    height: 100,
+    height: 150,
     backgroundColor: 'white',
     alignSelf: 'center',
     borderRadius: 10,

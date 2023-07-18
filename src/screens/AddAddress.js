@@ -5,6 +5,8 @@ import uuid from 'react-native-uuid'
 import firestore from '@react-native-firebase/firestore'
 import Loader from '../common/Loader'
 import { useNavigation } from '@react-navigation/native'
+import { useDispatch } from 'react-redux'
+import { addAddress } from '../redux/slices/AddressSlice'
 
 const AddAddress = () => {
     const navigation = useNavigation()
@@ -13,26 +15,7 @@ const AddAddress = () => {
     const [state, setState] = useState('')
     const [pin, setPin] = useState('')
     const [visible, setVisible] = useState(false)
-    const saveAddress = async() => {
-        setVisible(true)
-        const id = await AsyncStorage.getItem('USERID')
-        const addressId = uuid.v4()
-        firestore().collection("address").doc(addressId).set({
-            addedBy:id,
-            addressId:addressId,
-            street:street,
-            city:city,
-            state:state,
-            pin:pin,
-            default:false
-        }).then(res=>{
-            setVisible(false)
-            navigation.goBack()
-        }).catch(error=>{
-            setVisible(false)
-            console.log(error)
-        })
-    }
+    const dispatch = useDispatch();
 
     return (
         <View style={styles.container}>
@@ -40,7 +23,7 @@ const AddAddress = () => {
             <TextInput value={city} onChangeText={(txt) => setCity(txt)} style={styles.input} placeholder='Введите название города' />
             <TextInput value={state} onChangeText={(txt) => setState(txt)} style={styles.input} placeholder='Введите регион' />
             <TextInput value={pin} onChangeText={(txt) => setPin(txt)} style={styles.input} keyboardType='number-pad' placeholder='Введите почтовый индекс' />
-            <TouchableOpacity style={styles.addNewBtn} onPress={() => { saveAddress() }}>
+            <TouchableOpacity style={styles.addNewBtn} onPress={() => { dispatch(addAddress({street:street, state:state, city:city, pin:pin, id: uuid.v4()})), navigation.goBack() }}>
                 <Text style={styles.btnText}>Сохранить</Text>
             </TouchableOpacity>
             <Loader visible={visible}/>

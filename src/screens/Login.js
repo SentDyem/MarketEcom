@@ -12,7 +12,7 @@ const Login = () => {
   const [password, setPassword] = useState('')
   const [visible, setVisible] = useState(false)
   const signin = () => {
-    setVisible(true)
+    //setVisible(true)
     firestore().collection("users").where("email", "==", email).get().then(snapshot => {
       console.log(JSON.stringify(snapshot.docs[0].data()))
       if (snapshot.docs != []) {
@@ -31,6 +31,7 @@ const Login = () => {
 await AsyncStorage.setItem("USERID", data.userId)
 await AsyncStorage.setItem("EMAIL", data.email)
 await AsyncStorage.setItem("NAME", data.name)
+await AsyncStorage.setItem("NAME", data.mobile)
 navigation.navigate('Main')
   }
   return (

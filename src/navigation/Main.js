@@ -3,13 +3,25 @@ import React, { useState } from 'react'
 import Search from '../tabs/Search'
 import Wishlist from '../tabs/Wishlist'
 import Home from '../tabs/Home'
-import Cart from '../tabs/Cart'
+import Cart from '../screens/Cart'
 import User from '../tabs/User'
+import Header from '../common/Header'
+import { useNavigation } from '@react-navigation/native'
 
 const Main = () => {
     const [activeTab, setActiveTab]=useState(0)
+    const navigation = useNavigation()
   return (
     <View style={styles.container}>
+        <Header 
+        leftIcon={require('../images/home.png')}
+        rightIcon={require('../images/shopping-cart.png')}
+        title={''}
+        onClickLeftIcon={() => {
+          navigation.goBack();
+        }}
+        isMain={true}
+        />
         <StatusBar backgroundColor={'white'} barStyle={'dark-content'}/>
         {activeTab==0?(<Home/>):activeTab==1?(<Search/>):activeTab==2?(<Cart/>):activeTab==3?(<Wishlist/>):(<User/>)}
       <View style = {styles.bottomView}>
@@ -21,14 +33,7 @@ const Main = () => {
             <Image source={require('../images/search.png')} style={[styles.tabIcon, {tintColor:activeTab==1?'blue':'black'}]}/>
             <Text style = {{fontSize:12, marginTop:2}}>Каталог</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.tab} onPress={()=>{setActiveTab(2)}}>
-            <Image source={require('../images/shopping-cart.png')} style={[styles.tabIcon, {tintColor:activeTab==2?'blue':'black'}]}/>
-            <Text style = {{fontSize:12, marginTop:2}}>Корзина</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.tab} onPress={()=>{setActiveTab(3)}}>
-            <Image source={require('../images/heart.png')} style={[styles.tabIcon, {tintColor:activeTab==3?'blue':'black'}]}/>
-            <Text style = {{fontSize:12, marginTop:2}}>Избранное</Text>
-        </TouchableOpacity>
+
         <TouchableOpacity style={styles.tab} onPress={()=>{setActiveTab(4)}}>
             <Image source={require('../images/user.png')} style={[styles.tabIcon, {tintColor:activeTab==4?'blue':'black'}]}/>
             <Text style = {{fontSize:12, marginTop:2}}>Профиль</Text>
