@@ -53,6 +53,7 @@ const Cart = () => {
 
   return (
     <View style={styles.container}>
+      
       {cartList.length > 0?(<View>
         <FlatList data={cartList} renderItem={({ item, index }) => {
           return (

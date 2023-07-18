@@ -31,12 +31,13 @@ const Home = () => {
       firestore().collection("cart").where("addedBy", "==", id).get().then(snapshot => {
         if (snapshot.docs.length > 0) {
           snapshot.docs.map(x => {
-            if (x._data.productId == item._data.productId) {
-              firestore().collection('cart').doc(cartId).set({ ...item._data, addedBy: id, qty: 1, cartId: cartId }).then(res => {
+            if (x._data.productID == item._data.productID) {
+              
+              firestore().collection('cart').doc(x._data.cartId).update({qty: x._data.qty+1}).then(res => {
               }).catch(error => { console.log(error) })
             }
             else {
-              firestore().collection('cart').doc(x._data.cartId).update({qty: x._data.qty+1}).then(res => {
+              firestore().collection('cart').doc(cartId).set({ ...item._data, addedBy: id, qty: 1, cartId: cartId }).then(res => {
               }).catch(error => { console.log(error) })
             }
           })
@@ -74,21 +75,13 @@ const Home = () => {
                 <View style={styles.priceView}>
                   <Text style={styles.discountPrice}>{item._data.discountPrice + '₽'}</Text>
                   <Text style={styles.price}>{item._data.price}</Text>
+                  <TouchableOpacity style={styles.addNewBtn} onPress={() => { checkLogin(item) }}><Text>ddddd</Text></TouchableOpacity>
                 </View>
-              </View>
-              <View style={styles.rightView}>
-                <TouchableOpacity onPress={() => { checkLogin(item) }}>
-                  <Image source={require('../images/heart.png')} style={styles.icon} />
-                </TouchableOpacity>
-                <Text style={styles.addToCart} onPress={() => { checkLogin(item) }}>В корзину</Text>
               </View>
             </TouchableOpacity>
           )
         }} />
       </View>
-      <LoginSignupDialog onClickLoginSign={() => { navigation.navigate("Login") }} onCancel={() => {
-        setVisible(false)
-      }} visible={visible} />
     </View>
   )
 }
