@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
     flex: 1
   },
   addNewBtn: {
-    backgroundColor: 'blue',
+    backgroundColor: '#007BFF',
     height: 50,
     width: '90%',
     position: 'absolute',
@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
 
   },
   default: {
-    backgroundColor: 'blue',
+    backgroundColor: '#007BFF',
     paddingLeft: 10,
     paddingRight: 10,
     paddingTop: 5,

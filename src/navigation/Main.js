@@ -26,16 +26,16 @@ const Main = () => {
         {activeTab==0?(<Home/>):activeTab==1?(<Search/>):activeTab==2?(<Cart/>):activeTab==3?(<Wishlist/>):(<User/>)}
       <View style = {styles.bottomView}>
         <TouchableOpacity style={styles.tab} onPress={()=>{setActiveTab(0)}}>
-            <Image source={require('../images/home.png')} style={[styles.tabIcon, {tintColor:activeTab==0?'blue':'black'}]}/>
+            <Image source={require('../images/home.png')} style={[styles.tabIcon, {tintColor:activeTab==0?'#007BFF':'black'}]}/>
             <Text style = {{fontSize:12, marginTop:2}}>Главная</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.tab} onPress={()=>{setActiveTab(1)}}>
-            <Image source={require('../images/search.png')} style={[styles.tabIcon, {tintColor:activeTab==1?'blue':'black'}]}/>
+            <Image source={require('../images/search.png')} style={[styles.tabIcon, {tintColor:activeTab==1?'#007BFF':'black'}]}/>
             <Text style = {{fontSize:12, marginTop:2}}>Каталог</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.tab} onPress={()=>{setActiveTab(4)}}>
-            <Image source={require('../images/user.png')} style={[styles.tabIcon, {tintColor:activeTab==4?'blue':'black'}]}/>
+            <Image source={require('../images/user.png')} style={[styles.tabIcon, {tintColor:activeTab==4?'#007BFF':'black'}]}/>
             <Text style = {{fontSize:12, marginTop:2}}>Профиль</Text>
         </TouchableOpacity>
       </View>

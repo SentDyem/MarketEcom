@@ -32,7 +32,7 @@ const Header = ({
                 onPress={() => {
                     onClickLeftIcon();
                 }}>
-                <Image source={leftIcon} style={styles.icon} />
+                <Image source={leftIcon} style={{height:18,width:18}} />
             </TouchableOpacity>
             </View>}
             {isMain && (
@@ -54,7 +54,7 @@ const Header = ({
                             width: 20,
                             height: 20,
                             borderRadius: 10,
-                            backgroundColor: 'blue',
+                            backgroundColor: '#007BFF',
                             position: 'absolute',
                             right: 0,
                             top: 0,

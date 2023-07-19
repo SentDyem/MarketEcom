@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import firestore from '@react-native-firebase/firestore'
 import { useSelector } from 'react-redux'
 import { useNavigation } from '@react-navigation/native'
+import SearchBar from '../common/Searchbar'
 
 const Search = () => {
   const products = useSelector(state => state);
@@ -20,7 +21,11 @@ const Search = () => {
 
   return (
     <View style = {styles.container}>
-      <TextInput placeholder='' value ={search} onChangeText={txt => {setSearch(txt); filterData(txt)}}/>
+      <SearchBar
+        placeholder="Введите текст для поиска"
+        onChangeText={txt => {setSearch(txt); filterData(txt)}}
+        value ={search}
+      />
 
       <FlatList data={searchedList} renderItem={({ item, index }) => {
           return (

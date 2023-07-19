@@ -5,6 +5,7 @@ import { useNavigation } from '@react-navigation/native'
 import useForceUpdate from 'use-force-update';
 import { useDispatch } from 'react-redux';
 import { emptyCart } from '../redux/slices/CartSlice';
+import RNRestart from 'react-native-restart';
 
 const User = () => {
   const [name, setName] = useState('')
@@ -39,36 +40,31 @@ const User = () => {
   return (
 
     <View style={styles.container}>
-      {id == null ? (<View>
-        <Text>Вы не авторизованы</Text>
-
-      </View>) : (
+      {id == null ? (navigation.navigate("Login")) : (
         <View style={styles.container}>
+          
+          <View style = {styles.profileContainer}>
           <Image source={require('../images/circle-user.png')} style={styles.profileImg}></Image>
           <Text style={styles.profileName}>{name}</Text>
-          <Text style={[styles.profileName, { fontSize: 14 }]}>{email}</Text>
+          <Text style={[styles.profileEmail]}>{email}</Text>
+          </View>
+          
           <View style={styles.menuContainer}>
-            <FlatList data={['Заказы',
-              'Адрес',
-              'Выйти']}
-              renderItem={({ item, index }) => {
-                return (
-                  <TouchableOpacity style={styles.listItem} onPress={() => {
-                    if (index == 0) {
-                      navigation.navigate("Orders")
-                    }
-                    else if (index == 1) {
-                      navigation.navigate("MyAddress")
-                    }
-                    else if (index == 2) {
-                      exitAccount()
-                      dispatch(emptyCart([]))
-                    }
-                  }}>
-                    <Text style={styles.itemName}>{item}</Text>
-                  </TouchableOpacity>
-                )
-              }} />
+          <TouchableOpacity style={styles.menuItem} onPress={()=> { navigation.navigate("Orders")}}> 
+           
+          <Text style={styles.menuItemText}>Заказы</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.menuItem} onPress={()=> { navigation.navigate("MyAddress")}} >
+          <Text style={styles.menuItemText}>Мои адреса</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.menuItem} onPress={()=> {
+          exitAccount()
+          dispatch(emptyCart([]))
+          RNRestart.restart();
+        }}>
+                    <Text style={styles.menuItemText} >Выйти</Text>
+        </TouchableOpacity>
+
           </View>
         </View>
       )}
@@ -85,41 +81,45 @@ const styles = StyleSheet.create({
     flex: 1
   },
   profileImg: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    alignSelf: 'center',
-    marginTop: 40,
+    width: 200,
+    height: 200,
+    borderRadius: 100,
+    marginBottom: 16,
   },
   profileName: {
-    alignSelf: 'center',
-    marginTop: 20,
-    fontSize: 20,
-    color: 'black'
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
+  profileEmail: {
+    fontSize: 18,
+    color: '#777',
+    marginBottom: 24,
   },
   menuContainer: {
-    width: '90%',
-    backgroundColor: 'white',
-    borderRadius: 10,
-    justifyContent: 'center',
-    alignSelf: 'center',
-    marginTop: 20,
+    padding: 16,
+    
 
   },
-  listItem: {
-    width: '90%',
-    height: 50,
-    borderBottomColor: 'gray',
-    borderBottomWidth: 0.8,
-    justifyContent: 'center',
-    alignSelf: 'center',
-
-    marginBottom: 10
+  profileContainer: {
+    alignItems: 'center',
+   
+  },
+  menuItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E0E0E0',
 
   },
   itemName: {
-    fontSize: 16,
-    color: 'black',
-    paddingLeft: 20
-  }
+    marginLeft: 16,
+    fontSize: 18,
+    color: '#333',
+  },
+  menuItemText: {
+    marginLeft: 16,
+    fontSize: 18,
+    color: '#333',
+  },
 })

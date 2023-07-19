@@ -1,4 +1,4 @@
-import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Dimensions, Image, StyleSheet, Text, TouchableOpacity, View, Alert } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import firestore from '@react-native-firebase/firestore'
 import { FlatList } from 'react-native-gesture-handler'
@@ -38,16 +38,19 @@ const Checkout = () => {
     };
 
     const orderPlace = async (paymentId) => {
+        let orderUuid = uuid.v4();
         const data = {
             items: cartList,
             amount: '$' + getTotal(),
             address: selectedAddress,
             paymentId: paymentId,
             userId: userId,
+            orderId:orderUuid
         }
         dispatch(orderItem(data))
         dispatch(emptyCart([]))
         navigation.navigate("Success")
+        console.log(data)
     };
 
     const getTotal = () => {
@@ -59,6 +62,28 @@ const Checkout = () => {
         })
         return total;
     };
+
+    const Pay = () => {
+        var options = {
+            description: 'Credits towards consultation',
+            image: 'https://i.imgur.com/3g7nmJC.png',
+            currency: 'USD',
+            key: 'rzp_test_ScTp5WyKibY9G3', // Your api key
+            amount: getTotal() * 100,
+            name: 'foo',
+            prefill: {
+                email: 'void@razorpay.com',
+                contact: '9191919191',
+                name: 'RazorPay Software'
+            },
+            theme: { color: 'blue' }
+        }
+        RazorpayCheckout.open(options).then((data) => {
+            orderPlace(data.razorpay_payment_id)
+        }).catch((error) => {
+            alert(`Error: ${error.code} | ${error.description}`);
+        });
+    }
 
     const getQty = () => {
         let temp = cartList;
@@ -86,7 +111,7 @@ const Checkout = () => {
                             <View style={styles.rightView}>
                                 <View style={{ flexDirection: 'row' }}>
 
-                                    <Text style={[styles.addToCart, { marginRight: 5, marginLeft: 5 }]} onPress={() => { }}>{item.qty}</Text>
+                                    <Text style={[styles.addToCart, { marginRight: 5, marginLeft: 5 }]} onPress={() => { }}>{item.qty+' ед.'}</Text>
 
                                 </View>
                             </View>
@@ -105,28 +130,17 @@ const Checkout = () => {
                 }}>{'Изменить адрес'}</Text>
 
             </View>
-            <Text style={styles.address}>{selectedAddress == '' ? 'Адрес не выбран' : selectedAddress}</Text>
+            <Text style={styles.address}>{selectedAddress == '' ? Alert.alert('Выберите адрес доставки') : selectedAddress}</Text>
             <TouchableOpacity style={styles.payBtn} onPress={() => {
-                var options = {
-                    description: 'Credits towards consultation',
-                    image: 'https://i.imgur.com/3g7nmJC.png',
-                    currency: 'USD',
-                    key: 'rzp_test_ScTp5WyKibY9G3', // Your api key
-                    amount: getTotal() * 100,
-                    name: 'foo',
-                    prefill: {
-                        email: 'void@razorpay.com',
-                        contact: '9191919191',
-                        name: 'RazorPay Software'
-                    },
-                    theme: { color: 'blue' }
+                if (selectedAddress == null)
+                {
+                    Alert.alert('Вы не указали адрес')
                 }
-                RazorpayCheckout.open(options).then((data) => {
-                    orderPlace(data.razorpay_payment_id)
-                    //alert(`Success: ${data.razorpay_payment_id}`);
-                }).catch((error) => {
-                    alert(`Error: ${error.code} | ${error.description}`);
-                });
+                else
+                {
+                    Pay()
+                }
+                
             }}>
                 <Text style={styles.btnText}>Оплатить</Text>
             </TouchableOpacity>
@@ -173,7 +187,7 @@ const styles = StyleSheet.create({
         textDecorationLine: 'line-through'
     },
     discountPrice: {
-        color: 'blue',
+        color: '#007BFF',
         fontSize: 20,
         marginLeft: 10,
         fontWeight: '600'
@@ -188,14 +202,13 @@ const styles = StyleSheet.create({
     },
     addToCart: {
         padding: 10,
-        borderWidth: 1,
         fontWeight: '600',
         marginTop: 10,
         borderRadius: 10,
-        fontSize: 16
+        fontSize: 16,
     },
     checkoutView: {
-        backgroundColor: 'blue',
+        backgroundColor: '#007BFF',
         height: 100,
         width: '100%',
         position: 'absolute',
@@ -252,7 +265,7 @@ const styles = StyleSheet.create({
         width: '90%',
         height: 50,
         borderRadius: 10,
-        backgroundColor: 'blue',
+        backgroundColor: '#007BFF',
         justifyContent: 'center',
         alignItems: 'center',
         alignSelf: 'center',

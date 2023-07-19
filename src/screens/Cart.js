@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
     textDecorationLine: 'line-through'
   },
   discountPrice: {
-    color: 'blue',
+    color: '#007BFF',
     fontSize: 20,
     marginLeft: 10,
     fontWeight: '600'
@@ -121,11 +121,11 @@ const styles = StyleSheet.create({
   },
   addToCart: {
     padding: 10,
-    borderWidth: 1,
     fontWeight: '600',
     marginTop: 10,
     borderRadius: 10,
-    fontSize: 16
+    fontSize: 20,
+    color:'black'
   },
   
 })

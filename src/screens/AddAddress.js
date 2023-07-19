@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, Alert } from 'react-native'
 import React, { useState } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import uuid from 'react-native-uuid'
@@ -17,13 +17,25 @@ const AddAddress = () => {
     const [visible, setVisible] = useState(false)
     const dispatch = useDispatch();
 
+    const saveAddress= () => {
+        if (!street || !city || !state || !pin)
+        {
+          Alert.alert('Ошибка', 'Пожалуйста, заполните все поля.');
+        }
+        else
+        {
+            dispatch(addAddress({street:street, state:state, city:city, pin:pin, id: uuid.v4()})), 
+            navigation.goBack()
+        }
+    }
+
     return (
         <View style={styles.container}>
             <TextInput value={street} onChangeText={(txt) => setStreet(txt)} style={styles.input} placeholder='Введите улицу' />
             <TextInput value={city} onChangeText={(txt) => setCity(txt)} style={styles.input} placeholder='Введите название города' />
             <TextInput value={state} onChangeText={(txt) => setState(txt)} style={styles.input} placeholder='Введите регион' />
             <TextInput value={pin} onChangeText={(txt) => setPin(txt)} style={styles.input} keyboardType='number-pad' placeholder='Введите почтовый индекс' />
-            <TouchableOpacity style={styles.addNewBtn} onPress={() => { dispatch(addAddress({street:street, state:state, city:city, pin:pin, id: uuid.v4()})), navigation.goBack() }}>
+            <TouchableOpacity style={styles.addNewBtn} onPress={() => { saveAddress() }}>
                 <Text style={styles.btnText}>Сохранить</Text>
             </TouchableOpacity>
             <Loader visible={visible}/>
@@ -46,7 +58,7 @@ const styles = StyleSheet.create({
         marginTop: 20
     }, 
     addNewBtn: {
-        backgroundColor: 'blue',
+        backgroundColor: '#007BFF',
         height: 50,
         width: '90%',
 

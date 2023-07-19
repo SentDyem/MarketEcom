@@ -34,18 +34,17 @@ const styles = StyleSheet.create({
   },
   title: {
     marginTop:10,
-    fontSize: 15
+    fontSize: 15,
   },
   titleText: {
     fontSize: 20,
     color:'black',
      marginTop:20,
-     borderWidth:1,
      padding: 15,
-     borderRadius:10,
+     borderRadius:20,
      borderColor:'gray',
-     backgroundColor: 'white',
-     color: 'black'
+     backgroundColor: '#007BFF',
+     color: 'white'
 
   }
 

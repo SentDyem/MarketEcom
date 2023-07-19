@@ -20,7 +20,7 @@ export default CartLayout
 
 const styles = StyleSheet.create({
     checkoutView: {
-        backgroundColor: 'blue',
+        backgroundColor: '#007BFF',
         height: 100,
         width: '100%',
         position: 'absolute',

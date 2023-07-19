@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
     loginSignupBtn:{
         width:'90%',
         height:50,
-        backgroundColor:'blue',
+        backgroundColor:'#007BFF',
         borderRadius:10,
         marginTop:30,
         alignSelf:'center',

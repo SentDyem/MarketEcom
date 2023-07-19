@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Image,TextInput } from 'react-native'
+import { View, Text, StyleSheet, Image,TextInput, Alert } from 'react-native'
 import React, {useState} from 'react'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { useNavigation } from '@react-navigation/native'
@@ -6,6 +6,7 @@ import firestore from '@react-native-firebase/firestore'
 import uuid from 'react-native-uuid'
 import Loader from '../common/Loader'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import RNRestart from 'react-native-restart';
 
 const Signup = () => {
     const navigation = useNavigation()
@@ -18,20 +19,31 @@ const Signup = () => {
     {
         setVisible(true)
         const userId = uuid.v4()
-      firestore().collection("users").doc(userId).set({
-        name:name,
-        email:email,
-        password:password,
-        userId:userId,
-        mobile:mobile,
-      }).then(res=>
+        if (!name || !email || !password || !mobile)
         {
-            //setVisible(false)
-            console.log("user created")
-            navigation.navigate("Login")
-        }).catch(error=>{
-            //setVisible(false)
-        })
+          Alert.alert('Ошибка', 'Пожалуйста, заполните все поля.');
+          setVisible(false)
+        }
+        else
+        {
+          setVisible(true)
+          firestore().collection("users").doc(userId).set({
+            name:name,
+            email:email,
+            password:password,
+            userId:userId,
+            mobile:mobile,
+          }).then(res=>
+            {
+                //setVisible(false)
+                console.log("user created")
+                navigation.navigate("Login")
+               
+            }).catch(error=>{
+                //setVisible(false)
+            })
+        }
+      
     }
 
     const goToNextScreen = async(userId, email, name, mobile) =>{
@@ -50,7 +62,7 @@ const Signup = () => {
             <Text style = {styles.title}>Регистрация аккаунта</Text>
             <TextInput value ={name} onChangeText={txt=> setName(txt)} style={styles.input} placeholder='Введите имя'/>
             <TextInput value ={email} onChangeText={txt=> setEmail(txt)} style={styles.input} placeholder='Введите почту'/>
-            <TextInput value ={mobile} onChangeText={txt=> setMobile(txt)} style={styles.input} placeholder='Введите номер телефона'/>
+            <TextInput value ={mobile} keyboardType='number-pad' onChangeText={txt=> setMobile(txt)} style={styles.input} placeholder='Введите номер телефона'/>
             <TextInput value ={password} onChangeText={txt=> setPassword(txt)} style={styles.input} placeholder='Введите пароль'/>
             <TouchableOpacity style={styles.loginSignupBtn} onPress={()=>{registerUser()}}>
                 <Text style = {styles.btnText}>Зарегистрироваться</Text>
@@ -113,7 +125,7 @@ const styles = StyleSheet.create({
   loginSignupBtn:{
     width:'90%',
     height:50,
-    backgroundColor:'blue',
+    backgroundColor:'#007BFF',
     borderRadius:10,
     marginTop:30,
     alignSelf:'center',

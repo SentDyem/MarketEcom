@@ -5,6 +5,7 @@ import { useNavigation } from '@react-navigation/native'
 import firestore from '@react-native-firebase/firestore'
 import Loader from '../common/Loader'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import RNRestart from 'react-native-restart';
 
 const Login = () => {
   const navigation = useNavigation()
@@ -13,19 +14,24 @@ const Login = () => {
   const [visible, setVisible] = useState(false)
   const signin = () => {
     //setVisible(true)
-    firestore().collection("users").where("email", "==", email).get().then(snapshot => {
-      console.log(JSON.stringify(snapshot.docs[0].data()))
-      if (snapshot.docs != []) {
-        if (snapshot.docs[0].data().password == password) {
-
-          goToNextScreen(snapshot.docs[0].data())
-        }
-        else {
-          Alert.alert('Ошибка')
-        }
+    if (!email || !password) {
+      Alert.alert('Ошибка', 'Пожалуйста, заполните все поля.');}
+      else {
+        firestore().collection("users").where("email", "==", email).get().then(snapshot => {
+          console.log(JSON.stringify(snapshot.docs[0].data()))
+          if (snapshot.docs != []) {
+            if (snapshot.docs[0].data().password == password) {
+    
+              goToNextScreen(snapshot.docs[0].data())
+            }
+            else {
+              Alert.alert('Ошибка');
+            }
+          }
+        })
+        setVisible(false)
       }
-    })
-    setVisible(false)
+    
   }
   const goToNextScreen = async(data) =>{
 await AsyncStorage.setItem("USERID", data.userId)
@@ -33,6 +39,7 @@ await AsyncStorage.setItem("EMAIL", data.email)
 await AsyncStorage.setItem("NAME", data.name)
 await AsyncStorage.setItem("NAME", data.mobile)
 navigation.navigate('Main')
+RNRestart.restart();
   }
   return (
     <View style={styles.container}>
@@ -104,7 +111,7 @@ const styles = StyleSheet.create({
   loginSignupBtn: {
     width: '90%',
     height: 50,
-    backgroundColor: 'blue',
+    backgroundColor: '#007BFF',
     borderRadius: 10,
     marginTop: 30,
     alignSelf: 'center',
