@@ -1,18 +1,25 @@
 import { Alert, Dimensions, Image, StyleSheet, Text, Touchable, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import firestore from '@react-native-firebase/firestore'
-import { FlatList } from 'react-native-gesture-handler'
+import { FlatList, ScrollView } from 'react-native-gesture-handler'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import LoginSignupDialog from '../common/LoginSignupDialog'
 import { useNavigation } from '@react-navigation/native'
 import uuid from 'react-native-uuid'
 import { useDispatch } from 'react-redux'
 import { addProducts } from '../redux/slices/ProductsSlice'
+import { SliderBox } from "react-native-image-slider-box";
+
 
 const Home = () => {
   const navigation = useNavigation()
   const [products, setProducts] = useState([])
   const dispatch = useDispatch()
+  const [images, setImages] = React.useState([
+    "https://a.storyblok.com/f/156985/600x295/cd6b7da7c3/flash-sale.png",
+    "https://img.pikbest.com/backgrounds/20191112/black-friday-sale-gold-background-with-balloons-sale-promo-banner-modern-design-layout-v_1594264jpg!w700wp",
+    "https://www.crushpixel.com/big-static16/preview4/summer-sale-with-paper-cut-2430421.jpg",
+]);
   useEffect(() => {
     getProducts();
   }, [])
@@ -33,6 +40,17 @@ const Home = () => {
 
   return (
     <View style={styles.container}>
+      <ScrollView>
+      <SliderBox 
+                images={images}
+                sliderBoxHeight={200}
+                dotColor="blue"
+                inactiveDotColor="white"  
+                paginationBoxVerticalPadding={20}
+                autoplay
+                circleLoop
+            />
+            <Text>Последние поступления</Text>
       <View>
         <FlatList data={products} renderItem={({ item, index }) => {
           return (
@@ -51,6 +69,8 @@ const Home = () => {
           )
         }} />
       </View>
+      </ScrollView>
+      
     </View>
   )
 }

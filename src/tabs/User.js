@@ -3,12 +3,15 @@ import React, { useEffect, useState } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { useNavigation } from '@react-navigation/native'
 import useForceUpdate from 'use-force-update';
+import { useDispatch } from 'react-redux';
+import { emptyCart } from '../redux/slices/CartSlice';
 
 const User = () => {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [id, setId] = useState('')
   const navigation = useNavigation()
+  const dispatch = useDispatch()
   
 
   useEffect(() => {
@@ -59,6 +62,7 @@ const User = () => {
                     }
                     else if (index == 2) {
                       exitAccount()
+                      dispatch(emptyCart([]))
                     }
                   }}>
                     <Text style={styles.itemName}>{item}</Text>

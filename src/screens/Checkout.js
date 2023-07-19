@@ -8,47 +8,57 @@ import { useIsFocused, useNavigation } from '@react-navigation/native'
 import RazorpayCheckout from 'react-native-razorpay';
 import uuid from 'react-native-uuid'
 import { useDispatch, useSelector } from 'react-redux'
+import { orderItem } from '../redux/slices/OrderSlice';
+import { emptyCart } from '../redux/slices/CartSlice'
 
 const Checkout = () => {
     const navigation = useNavigation()
     const items = useSelector(state => state.cart)
-  const [cartList, setCartList] = useState([])
-  const [selectedAddress, setSelectedAddress]=useState('')
-  const [name, setName]= useState('')
-    const [email, setEmail]= useState('')
-    const [mobile, setMobile]= useState('')
-  const isFocused = useIsFocused()
-  const dispatch = useDispatch()
+    const [cartList, setCartList] = useState([])
+    const [selectedAddress, setSelectedAddress] = useState('')
+    const [userId, setUserId] = useState('')
+    const isFocused = useIsFocused()
+    const dispatch = useDispatch()
 
     useEffect(() => {
         setCartList(items.data)
-        getData()
-    }, [])
+    }, [items])
     useEffect(() => {
         getSelectedAddress()
     }, [isFocused])
-    const getSelectedAddress = async()=> {
+    useEffect(() => {
+        getUserId()
+    }, [])
+    const getSelectedAddress = async () => {
         setSelectedAddress(await AsyncStorage.getItem('MY_ADDRESS'))
     }
-    const getData = async () => {
-        let mName = await AsyncStorage.getItem("NAME")
-        let mEmail = await AsyncStorage.getItem("EMAIL")
-        let mMobile = await AsyncStorage.getItem("MOBILE")
-        setName(mName)
-        setEmail(mEmail)
-        setMobile(mMobile)
-      }
-    
+    const getUserId = async () => {
+        setUserId(await AsyncStorage.getItem('USERID'))
+        console.log(userId)
+    };
+
+    const orderPlace = async (paymentId) => {
+        const data = {
+            items: cartList,
+            amount: '$' + getTotal(),
+            address: selectedAddress,
+            paymentId: paymentId,
+            userId: userId,
+        }
+        dispatch(orderItem(data))
+        dispatch(emptyCart([]))
+        navigation.navigate("Success")
+    };
 
     const getTotal = () => {
         let temp = cartList;
         let total = 0
         temp.map(item => {
             total = total + parseInt(item.price * item.qty)
-            
+
         })
         return total;
-    }
+    };
 
     const getQty = () => {
         let temp = cartList;
@@ -57,7 +67,7 @@ const Checkout = () => {
             qty = qty + parseInt(item.qty)
         })
         return qty;
-    }
+    };
 
     return (
         <View style={styles.container}>
@@ -75,9 +85,9 @@ const Checkout = () => {
                             </View>
                             <View style={styles.rightView}>
                                 <View style={{ flexDirection: 'row' }}>
-                                    
+
                                     <Text style={[styles.addToCart, { marginRight: 5, marginLeft: 5 }]} onPress={() => { }}>{item.qty}</Text>
-                                    
+
                                 </View>
                             </View>
                         </View>
@@ -90,35 +100,35 @@ const Checkout = () => {
             </View>
             <View style={styles.totalView}>
                 <Text style={styles.title}>{'Адрес доставки'}</Text>
-                <Text style={[styles.title,{textDecorationLine:'underline', color:'blue'}]} onPress={()=>{
+                <Text style={[styles.title, { textDecorationLine: 'underline', color: 'blue' }]} onPress={() => {
                     navigation.navigate("MyAddress")
                 }}>{'Изменить адрес'}</Text>
-            
+
             </View>
-            <Text style = {styles.address}>{selectedAddress==''?'Адрес не выбран':selectedAddress}</Text>
-            <TouchableOpacity style = {styles.payBtn} onPress={() => {
-  var options = {
-    description: 'Credits towards consultation',
-    image: 'https://i.imgur.com/3g7nmJC.png',
-    currency: 'USD',
-    key: 'rzp_test_ScTp5WyKibY9G3', // Your api key
-    amount: getTotal(),
-    name: name,
-    prefill: {
-      email: email,
-      contact: '9191919191',
-      name: 'Pay Software'
-    },
-    theme: {color: '#F37254'}
-  }
-  RazorpayCheckout.open(options).then((data) => {
-    alert(`Success: ${data.razorpay_payment_id}`);
-    navigation.navigate("Success")
-  }).catch((error) => {
-    alert(`Error: ${error.code} | ${error.description}`);
-  });
-}}>
-                <Text style = {styles.btnText}>Оплатить</Text>
+            <Text style={styles.address}>{selectedAddress == '' ? 'Адрес не выбран' : selectedAddress}</Text>
+            <TouchableOpacity style={styles.payBtn} onPress={() => {
+                var options = {
+                    description: 'Credits towards consultation',
+                    image: 'https://i.imgur.com/3g7nmJC.png',
+                    currency: 'USD',
+                    key: 'rzp_test_ScTp5WyKibY9G3', // Your api key
+                    amount: getTotal() * 100,
+                    name: 'foo',
+                    prefill: {
+                        email: 'void@razorpay.com',
+                        contact: '9191919191',
+                        name: 'RazorPay Software'
+                    },
+                    theme: { color: 'blue' }
+                }
+                RazorpayCheckout.open(options).then((data) => {
+                    orderPlace(data.razorpay_payment_id)
+                    //alert(`Success: ${data.razorpay_payment_id}`);
+                }).catch((error) => {
+                    alert(`Error: ${error.code} | ${error.description}`);
+                });
+            }}>
+                <Text style={styles.btnText}>Оплатить</Text>
             </TouchableOpacity>
         </View>
     )
@@ -233,22 +243,22 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         color: 'black'
     },
-    address:{
-        marginLeft:20,
-        marginTop:20,
-        
+    address: {
+        marginLeft: 20,
+        marginTop: 20,
+
     },
     payBtn: {
         width: '90%',
-        height:50,
-        borderRadius:10,
-        backgroundColor:'blue',
-        justifyContent:'center',
-        alignItems:'center',
-        alignSelf:'center',
-        marginTop:30,
+        height: 50,
+        borderRadius: 10,
+        backgroundColor: 'blue',
+        justifyContent: 'center',
+        alignItems: 'center',
+        alignSelf: 'center',
+        marginTop: 30,
     },
     btnText: {
-        color:'white'
+        color: 'white'
     }
 })
