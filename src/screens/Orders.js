@@ -8,19 +8,27 @@ import { useSelector } from 'react-redux'
 const Orders = () => {
     const [orders, setOrders] = useState([])
     const ordersList = useSelector(state => state.order)
+    const getOrders = async () => {
+        const userId = await AsyncStorage.getItem("USERID")
+        firestore().collection('orders').where("data.userId", "==", userId).get().then(snapshot => {
+            setOrders(snapshot.docs)
+            console.log(snapshot.docs)
+        })
+    }
     useEffect(() => {
+        getOrders()
     }, [])
-    console.log(ordersList)
+    
     return (
         <View style={styles.container}>
-            <FlatList data={ordersList.data} renderItem={({ index, item }) => {
+            <FlatList data={orders} renderItem={({ index, item }) => {
                 return (
                     <View style={styles.orderItem}>
                         <View>
                         
-                        <Text style={styles.orderNumber}>Идентификатор заказа: {item.orderId}</Text>
-                        <Text style={styles.orderDate}>Адрес доставки: {item.address}</Text>
-                        <Text style={styles.orderTotal}>Общая стоимость: {item.amount}</Text>
+                        <Text style={styles.orderNumber}>Идентификатор заказа: {item._data.data.orderId}</Text>
+                        <Text style={styles.orderDate}>Адрес доставки: {item._data.data.address}</Text>
+                        <Text style={styles.orderTotal}>Общая стоимость: {item._data.data.amount}</Text>
                         <Text style={styles.orderStatus}>Статус: Заказ создан</Text>
                         </View>
                         

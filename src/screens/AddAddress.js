@@ -17,15 +17,30 @@ const AddAddress = () => {
     const [visible, setVisible] = useState(false)
     const dispatch = useDispatch();
 
-    const saveAddress= () => {
+    const saveAddress= async() => {
         if (!street || !city || !state || !pin)
         {
           Alert.alert('Ошибка', 'Пожалуйста, заполните все поля.');
         }
         else
         {
-            dispatch(addAddress({street:street, state:state, city:city, pin:pin, id: uuid.v4()})), 
+            const id = await AsyncStorage.getItem('USERID')
+            const addressId = uuid.v4()
+
+            firestore().collection("address").doc(addressId).set({
+            userId:id,
+            addressId:addressId,
+            street:street,
+            city:city,
+            state:state,
+            pin:pin,
+        }).then(res=>{
+            setVisible(false)
             navigation.goBack()
+        }).catch(error=>{
+            setVisible(false)
+            console.log(error)
+        })
         }
     }
 

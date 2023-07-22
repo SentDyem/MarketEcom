@@ -47,11 +47,13 @@ const Checkout = () => {
             userId: userId,
             orderId:orderUuid
         }
-        dispatch(orderItem(data))
+        //dispatch(orderItem(data))
         dispatch(emptyCart([]))
         navigation.navigate("Success")
         console.log(data)
-    };
+
+        firestore()
+  .collection('orders').doc(data.orderId).set({data}).then(() => {console.log('User added!');});};
 
     const getTotal = () => {
         let temp = cartList;

@@ -9,16 +9,32 @@ import { deleteAddress } from '../redux/slices/AddressSlice'
 const MyAddress = () => {
 
   const navigation = useNavigation()
-  const addressList = useSelector(state=> state.address)
+  const [addressList, setAddressList] = useState([])
   const isFocused = useIsFocused()
   const dispatch = useDispatch()
 
   useEffect(() => {
-    console.log(addressList)
+    getAddress()
   }, [isFocused])
 
+  const getAddress = async () => {
+    const id = await AsyncStorage.getItem('USERID')
+    firestore().collection("address").where("userId", "==", id).get().then(snapshot => {
+      if (snapshot.docs != []) {
+        setAddressList(snapshot.docs)
+        console.log(snapshot.docs)
+      }
+    })}
+
+    const deleteAddress = async (item) => {
+      firestore().collection("address").doc(item._data.addressId).delete()
+      getAddress()
+    }
+
+  
+
   const setDefault = async(item)=> {
-    await AsyncStorage.setItem('MY_ADDRESS',''+item.street+','+item.city+','+item.state+','+item.pin)
+    await AsyncStorage.setItem('MY_ADDRESS',''+item._data.street+','+item._data.city+','+item._data.state+','+item._data.pin)
     navigation.goBack()
   }
 
@@ -26,21 +42,21 @@ const MyAddress = () => {
 
   return (
     <View style={styles.container}>
-      <FlatList data={addressList.data} renderItem={({ item, index }) => {
+      <FlatList data={addressList} renderItem={({ item, index }) => {
         return (
           <TouchableOpacity style={styles.addressItem} onPress ={()=> {
 setDefault(item)
           }}>
             <View>
-              <Text>{"Улица: " + item.street}</Text>
-              <Text>{"Город: " + item.city}</Text>
-              <Text>{"Регион: " + item.state}</Text>
-              <Text>{"Почтовый индекс: " + item.pin}</Text>
+              <Text>{"Улица: " + item._data.street}</Text>
+              <Text>{"Город: " + item._data.city}</Text>
+              <Text>{"Регион: " + item._data.state}</Text>
+              <Text>{"Почтовый индекс: " + item._data.pin}</Text>
             </View>
             <View style = {{alignItems:'center'}}>
               <TouchableOpacity>
               <Text style={styles.delete} onPress={()=> {
-                dispatch(deleteAddress(item.id))
+                deleteAddress(item)
               }}>Удалить</Text>
               </TouchableOpacity>
 
@@ -54,6 +70,8 @@ setDefault(item)
     </View>
   )
 }
+
+
 
 export default MyAddress
 
