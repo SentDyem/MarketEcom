@@ -9,11 +9,14 @@ import uuid from 'react-native-uuid'
 import { useDispatch } from 'react-redux'
 import { addProducts } from '../redux/slices/ProductsSlice'
 import { SliderBox } from "react-native-image-slider-box";
+import { current } from '@reduxjs/toolkit'
 
 
 const Home = () => {
   const navigation = useNavigation()
   const [products, setProducts] = useState([])
+  const [categories, setCategories] = useState(['all'])
+  const [currentCategory, setCurrentCategory] = useState(categories[0])
   const dispatch = useDispatch()
   const [images, setImages] = React.useState([
     "https://a.storyblok.com/f/156985/600x295/cd6b7da7c3/flash-sale.png",
@@ -22,6 +25,7 @@ const Home = () => {
   ]);
   useEffect(() => {
     getProducts();
+    getCategories();
   }, [])
 
   const getProducts = () => {
@@ -34,8 +38,17 @@ const Home = () => {
         })
         dispatch(addProducts(json));
       })
+      
 
+  }
 
+  const getCategories = () => {
+    fetch('https://fakestoreapi.com/products/categories')
+        .then(res=>res.json())
+        .then(json=>{
+          setCategories(current => [...current, ...json])
+          console.log(categories)
+        })
   }
 
   return (
@@ -50,9 +63,24 @@ const Home = () => {
           autoplay
           circleLoop
         />
-        <Text style = {styles.categoryTitle}>Последние поступления</Text>
+        <View style = {{height:70, width:'100%', flex:1}}>
+        <FlatList
+            data={categories}
+            renderItem={({item, index}) => {
+              return(
+              <TouchableOpacity style = {styles.categoryItem} onPress={()=> {
+                setCurrentCategory(item)
+              }}>
+                <Text style = {styles.categoryText}>{item}</Text>
+              </TouchableOpacity>
+              )
+              
+            }}
+            horizontal
+          />
+        </View>
         <View>
-          <FlatList data={products} keyExtractor={(item) => item.id} renderItem={({ item, index }) => {
+          <FlatList data={products.filter(data => currentCategory == 'all' ? data : data.category == currentCategory)} keyExtractor={(item) => item.id} renderItem={({ item, index }) => {
             return (
               <TouchableOpacity style={styles.productItem} onPress={() => {
                 navigation.navigate("ProductDetail", { data: item })
@@ -169,4 +197,21 @@ const styles = StyleSheet.create({
     marginTop:20,
     marginLeft:10
   },
+  categoryItem: {
+    flex:1,
+    alignItems:'center',
+    justifyContent:'center',
+    margin:10,
+    marginTop:15,
+    padding: 10,
+        borderWidth:0,
+    borderRadius:10,
+    borderColor:'white',
+    backgroundColor: '#FFFFFF'
+  },
+  categoryText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    
+  }
 })
