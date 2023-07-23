@@ -23,6 +23,7 @@ const Login = () => {
             if (snapshot.docs[0].data().password == password) {
     
               goToNextScreen(snapshot.docs[0].data())
+              setVisible(true)
             }
             else {
               Alert.alert('Ошибка');

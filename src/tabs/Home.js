@@ -19,9 +19,9 @@ const Home = () => {
   const [currentCategory, setCurrentCategory] = useState(categories[0])
   const dispatch = useDispatch()
   const [images, setImages] = React.useState([
-    "https://a.storyblok.com/f/156985/600x295/cd6b7da7c3/flash-sale.png",
-    "https://img.pikbest.com/backgrounds/20191112/black-friday-sale-gold-background-with-balloons-sale-promo-banner-modern-design-layout-v_1594264jpg!w700wp",
-    "https://www.crushpixel.com/big-static16/preview4/summer-sale-with-paper-cut-2430421.jpg",
+    "https://www.radio-tech.ru/upload/iblock/0fe/%D0%B0%D0%BA%D1%86%D0%B8%D1%8F.jpg",
+    "https://img.global.news.samsung.com/ru/wp-content/uploads/2022/01/%D0%98%D0%BD%D1%84%D0%BE%D0%B3%D1%80%D0%B0%D1%84%D0%B8%D0%BA%D0%B0-CES-award-of-monitor_RUS_upd-1-689x563.jpg",
+    "https://secondhandstore.ru/wa-data/public/mailer/files/118/111111.jpg",
   ]);
   useEffect(() => {
     getProducts();
