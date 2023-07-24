@@ -52,7 +52,7 @@ const User = () => {
           <View style={styles.menuContainer}>
           <TouchableOpacity style={styles.menuItem} onPress={()=> { navigation.navigate("Orders")}}> 
            
-          <Text style={styles.menuItemText}>Заказы</Text>
+          <Text style={styles.menuItemText}>Мои заказы</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.menuItem} onPress={()=> { navigation.navigate("MyAddress")}} >
           <Text style={styles.menuItemText}>Мои адреса</Text>

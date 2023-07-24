@@ -39,13 +39,29 @@ const Checkout = () => {
 
     const orderPlace = async (paymentId) => {
         let orderUuid = uuid.v4();
+        const day = new Date().getDate()
+        const month = new Date().getMonth() + 1
+        const year = new Date().getFullYear()
+        const hours = new Date().getMinutes()
+        const minutes = new Date().getMinutes()
         const data = {
             items: cartList,
             amount: '$' + getTotal(),
             address: selectedAddress,
             paymentId: paymentId,
             userId: userId,
-            orderId:orderUuid
+            orderId: orderUuid,
+            createdAt:
+                day +
+                '/' +
+                month +
+                '/' +
+                year +
+                ' ' +
+                hours +
+                ':' +
+                minutes,
+                status: 'created',
         }
         //dispatch(orderItem(data))
         dispatch(emptyCart([]))
@@ -53,7 +69,8 @@ const Checkout = () => {
         console.log(data)
 
         firestore()
-  .collection('orders').doc(data.orderId).set({data}).then(() => {console.log('User added!');});};
+            .collection('orders').doc(data.orderId).set({ data }).then(() => { console.log('User added!'); });
+    };
 
     const getTotal = () => {
         let temp = cartList;
@@ -113,7 +130,7 @@ const Checkout = () => {
                             <View style={styles.rightView}>
                                 <View style={{ flexDirection: 'row' }}>
 
-                                    <Text style={[styles.addToCart, { marginRight: 5, marginLeft: 5 }]} onPress={() => { }}>{item.qty+' ед.'}</Text>
+                                    <Text style={[styles.addToCart, { marginRight: 5, marginLeft: 5 }]} onPress={() => { }}>{item.qty + ' ед.'}</Text>
 
                                 </View>
                             </View>
@@ -134,15 +151,13 @@ const Checkout = () => {
             </View>
             <Text style={styles.address}>{selectedAddress == '' ? Alert.alert('Выберите адрес доставки') : selectedAddress}</Text>
             <TouchableOpacity style={styles.payBtn} onPress={() => {
-                if (selectedAddress == null)
-                {
+                if (selectedAddress == null) {
                     Alert.alert('Вы не указали адрес')
                 }
-                else
-                {
+                else {
                     Pay()
                 }
-                
+
             }}>
                 <Text style={styles.btnText}>Оплатить</Text>
             </TouchableOpacity>
