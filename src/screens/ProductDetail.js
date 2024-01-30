@@ -64,7 +64,14 @@ const ProductDetail = () => {
           </View>
           <Text style={styles.description}>{route.params.data.description}</Text>
           <Text style={styles.price}>{route.params.data.price}$</Text>
-
+          <TouchableOpacity
+      style={styles.arButton}
+      onPress={() => {
+        navigation.navigate("ARScreen");
+      }}
+    >
+      <Text style={styles.btnText}>Перейти к AR экрану</Text>
+    </TouchableOpacity>
         </View>
 
 
@@ -84,6 +91,13 @@ export default ProductDetail
 const styles = StyleSheet.create({
   container: {
     flex: 1
+  },
+  arButton: {
+    backgroundColor: '#007BFF',
+    padding: 15,
+    borderRadius: 10,
+    alignItems: 'center',
+    marginTop: 20,
   },
   productImage: {
     width: 300,
